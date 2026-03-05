@@ -2,27 +2,95 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Prueba Audio Escape Room</title>
+<title>Laboratorio Secreto</title>
+<style>
+body {
+    background: url('laboratorio_fondo.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    padding-top: 50px;
+}
+h2 { font-size: 36px; text-shadow: 0 0 10px #0f0; margin-bottom: 20px; }
+#mensaje { font-size: 20px; min-height: 60px; margin-bottom: 20px; text-align: left; display: inline-block; white-space: pre-wrap; border-right: 2px solid #0f0; padding-right:5px;}
+input, button { padding: 12px 20px; font-size: 18px; border-radius: 8px; border: 2px solid #0f0; background-color: #000; color: #0f0; margin-top: 10px; outline: none; }
+button { animation: parpadeo 1s infinite alternate; }
+button:hover { background-color: #0f0; color: #000; cursor: pointer; }
+@keyframes parpadeo { from { box-shadow:0 0 5px #0f0;} to{box-shadow:0 0 20px #0f0;} }
+</style>
 </head>
 <body>
 
-<h2>Prueba de Audios</h2>
+<h2>Laboratorio Secreto</h2>
+<div id="mensaje"></div>
 
-<!-- Botón directo para música -->
-<button onclick="document.getElementById('musica').play()">Escuchar música de fondo</button>
-<audio id="musica" preload="auto">
+<!-- Botón para música -->
+<button id="btn_musica">Modo Ambientillo ON (haz clic para escuchar música)</button>
+
+<!-- Zona de código -->
+<div id="zona_codigo" style="display:none; margin-top:30px;">
+    <p>Introduce el código de 4 cifras:</p>
+    <input type="text" id="codigo" maxlength="4">
+    <br>
+    <button id="btn_enviar">Enviar código</button>
+</div>
+
+<!-- Botón de pista -->
+<div id="boton_pista" style="display:none; margin-top:20px;">
+    <button id="btn_pista">PISTA SUPERSECRETA</button>
+</div>
+
+<!-- Audio -->
+<audio id="musica_fondo" preload="auto">
   <source src="musica_fondo_v2.mp3" type="audio/mpeg">
   <source src="musica_fondo_v2.ogg" type="audio/ogg">
 </audio>
 
-<br><br>
-
-<!-- Botón directo para pista -->
-<button onclick="document.getElementById('pista').play()">Escuchar pista</button>
-<audio id="pista" preload="auto">
+<audio id="audio_pista" preload="auto">
   <source src="audio_pista_v2.mp3" type="audio/mpeg">
   <source src="audio_pista_v2.ogg" type="audio/ogg">
 </audio>
+
+<script>
+const codigoCorrecto = "7391";
+const frasesError = ["buaaa das pena","mongol","destilas mediocridad"];
+
+// Función para mostrar mensaje en el cuadro
+function escribirMensaje(texto) {
+    const cont = document.getElementById('mensaje');
+    cont.textContent = texto;
+}
+
+// Botón Música
+document.getElementById('btn_musica').addEventListener('click', function(){
+    const bg = document.getElementById('musica_fondo');
+    bg.volume = 0.3;
+    bg.play().catch(err=>console.log(err)); // reproducción garantizada por clic
+    escribirMensaje("Bienvenidos Josin y Emilia al laboratorio secreto, introduzcan el código correcto para desbloquear la pista");
+    document.getElementById('zona_codigo').style.display='block';
+    this.style.display='none';
+});
+
+// Botón Enviar código
+document.getElementById('btn_enviar').addEventListener('click', function(){
+    const codigo = document.getElementById('codigo').value;
+    if(codigo === codigoCorrecto){
+        escribirMensaje("Reconocimiento completado. ¡Pulsa PISTA SUPERSECRETA!");
+        document.getElementById('boton_pista').style.display='block';
+    } else {
+        const frase = frasesError[Math.floor(Math.random()*frasesError.length)];
+        escribirMensaje(frase);
+        document.getElementById('codigo').value = "";
+    }
+});
+
+// Botón Pista
+document.getElementById('btn_pista').addEventListener('click', function(){
+    const pista = document.getElementById('audio_pista');
+    pista.play().catch(err=>console.log(err)); // reproducción garantizada por clic
+});
+</script>
 
 </body>
 </html>
