@@ -48,7 +48,6 @@ button:hover {
 
 <h2>Laboratorio Secreto</h2>
 
-<!-- Botón inicial para activar laboratorio -->
 <button id="btn_inicio">Activar Laboratorio Secreto</button>
 
 <div id="zona_codigo" style="display:none; margin-top:30px;">
@@ -72,39 +71,51 @@ const frasesError = [
 // Código secreto
 const codigoCorrecto = "7391";
 
-// Función para hablar con voz de robot
-function hablar(texto) {
+// Función para hablar con voz masculina y tono de burla
+function hablar(texto, callback) {
     const synth = window.speechSynthesis;
     const utter = new SpeechSynthesisUtterance(texto);
     utter.lang = 'es-ES';
-    utter.pitch = 1.2;
+    utter.pitch = 0.6;      // tono más grave
     utter.rate = 0.9;
+    
+    // Elegir voz masculina disponible
+    const voces = synth.getVoices().filter(v => v.lang.includes('es') && v.name.toLowerCase().includes('male'));
+    if(voces.length > 0) utter.voice = voces[0];
+    
+    // Mientras habla, bajar volumen música
+    const bg = document.getElementById('musica_fondo');
+    const volumenOriginal = bg.volume;
+    bg.volume = 0.2; // bajar la música
+    
+    utter.onend = () => {
+        bg.volume = volumenOriginal; // restaurar volumen
+        if(callback) callback(); // ejecutar función después de hablar
+    };
+    
     synth.speak(utter);
 }
 
 // Botón inicial
 document.getElementById('btn_inicio').addEventListener('click', function() {
-    // Ocultar botón y mostrar zona de código
     this.style.display = 'none';
     document.getElementById('zona_codigo').style.display = 'block';
-    
-    // Mensaje inicial
-    hablar("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista");
-    
-    // Iniciar música de fondo
+
     const bg = document.getElementById('musica_fondo');
-    bg.play();
+    bg.play(); // inicia música de fondo
+
+    // Voz del robot y mensaje inicial
+    hablar("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista");
 });
 
 // Función de verificación del código
 function verificarCodigo() {
     const codigo = document.getElementById('codigo').value;
     if(codigo === codigoCorrecto) {
-        hablar("Reconocimiento completado, adelante la siguiente pista");
-        const audio = document.getElementById('audio_pista');
-        audio.play();
+        hablar("Reconocimiento completado, adelante la siguiente pista", () => {
+            document.getElementById('audio_pista').play();
+        });
     } else {
-        // Elegir frase aleatoria
         const frase = frasesError[Math.floor(Math.random() * frasesError.length)];
         hablar(frase);
         document.getElementById('codigo').value = "";
