@@ -27,12 +27,6 @@ h2 {
     padding-right: 5px;
     white-space: pre-wrap;
 }
-.cursor {
-    animation: blink 1s step-start infinite;
-}
-@keyframes blink {
-    50% { border-color: transparent; }
-}
 input, button {
     padding: 12px 20px;
     font-size: 18px;
@@ -63,8 +57,10 @@ button:hover {
 
 <div id="mensaje"></div>
 
+<!-- Botón inicial para activar música -->
 <button id="btn_musica">Modo Ambientillo ON</button>
 
+<!-- Zona de código -->
 <div id="zona_codigo" style="display:none; margin-top:30px;">
     <p>Introduce el código de 4 cifras:</p>
     <input type="text" id="codigo" maxlength="4" autofocus>
@@ -72,12 +68,21 @@ button:hover {
     <button onclick="verificarCodigo()">Enviar</button>
 </div>
 
+<!-- Botón de pista que aparece después de acertar -->
 <div id="boton_pista" style="display:none; margin-top:20px;">
     <button onclick="reproducirPista()">PISTA SUPERSECRETA</button>
 </div>
 
-<audio id="musica_fondo" src="musica_fondo.mp3" loop></audio>
-<audio id="audio_pista" src="audio_pista.mp3"></audio>
+<!-- Audio dual: .ogg y .mp3 -->
+<audio id="musica_fondo" loop>
+    <source src="musica_fondo.ogg" type="audio/ogg">
+    <source src="musica_fondo.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="audio_pista">
+    <source src="audio_pista.ogg" type="audio/ogg">
+    <source src="audio_pista.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 // Frases de error diferentes cada vez
