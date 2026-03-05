@@ -21,7 +21,17 @@ h2 {
     font-size: 20px;
     min-height: 60px;
     margin-bottom: 20px;
-    text-align: center;
+    text-align: left;
+    display: inline-block;
+    border-right: 2px solid #0f0; /* cursor */
+    padding-right: 5px;
+    white-space: pre-wrap;
+}
+.cursor {
+    animation: blink 1s step-start infinite;
+}
+@keyframes blink {
+    50% { border-color: transparent; }
 }
 input, button {
     padding: 12px 20px;
@@ -53,7 +63,7 @@ button:hover {
 
 <div id="mensaje"></div>
 
-<button id="btn_inicio">Pulsa aquí para activar el laboratorio secreto</button>
+<button id="btn_musica">Modo Ambientillo ON</button>
 
 <div id="zona_codigo" style="display:none; margin-top:30px;">
     <p>Introduce el código de 4 cifras:</p>
@@ -62,15 +72,19 @@ button:hover {
     <button onclick="verificarCodigo()">Enviar</button>
 </div>
 
-<audio id="audio_pista" src="audio_pista.mp3"></audio>
+<div id="boton_pista" style="display:none; margin-top:20px;">
+    <button onclick="reproducirPista()">PISTA SUPERSECRETA</button>
+</div>
+
 <audio id="musica_fondo" src="musica_fondo.mp3" loop></audio>
+<audio id="audio_pista" src="audio_pista.mp3"></audio>
 
 <script>
-// Frases de error sin repetir hasta que se acaben y volver a empezar
+// Frases de error diferentes cada vez
 const frasesError = ["buaaa das pena","mongol","destilas mediocridad"];
-const codigoCorrecto = "7391"; 
+const codigoCorrecto = "7391";
 
-// Función para escribir letra por letra
+// Escribir mensaje letra por letra con cursor
 function escribirMensaje(texto, callback) {
     const cont = document.getElementById('mensaje');
     cont.textContent = "";
@@ -81,27 +95,27 @@ function escribirMensaje(texto, callback) {
             clearInterval(interval);
             if(callback) callback();
         }
-    }, 50);
+    },50);
 }
 
-// Botón inicial
-document.getElementById('btn_inicio').addEventListener('click', function(){
-    this.style.display='none';
-    document.getElementById('zona_codigo').style.display='block';
-
+// Botón para activar música
+document.getElementById('btn_musica').addEventListener('click', function(){
     const bg = document.getElementById('musica_fondo');
     bg.volume = 0.3;
-    bg.play().catch(err=>console.log("Error música: ",err));
+    bg.play().catch(err=>console.log("Error música:",err));
 
+    document.getElementById('zona_codigo').style.display='block';
     escribirMensaje("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista");
+
+    this.style.display='none';
 });
 
 // Verificación del código
 function verificarCodigo(){
     const codigo = document.getElementById('codigo').value;
     if(codigo === codigoCorrecto){
-        escribirMensaje("Reconocimiento completado, adelante la siguiente pista", ()=>{
-            document.getElementById('audio_pista').play().catch(err=>console.log("Error audio pista:",err));
+        escribirMensaje("Reconocimiento completado. ¡Pulsad el botón de la PISTA SUPERSECRETA!", ()=>{
+            document.getElementById('boton_pista').style.display='block';
         });
     } else {
         const frase = frasesError[Math.floor(Math.random()*frasesError.length)];
@@ -109,6 +123,11 @@ function verificarCodigo(){
         document.getElementById('codigo').value="";
         document.getElementById('codigo').focus();
     }
+}
+
+// Reproducir audio de la pista
+function reproducirPista(){
+    document.getElementById('audio_pista').play().catch(err=>console.log("Error audio pista:",err));
 }
 </script>
 
