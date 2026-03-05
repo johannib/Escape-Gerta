@@ -17,6 +17,12 @@ h2 {
     text-shadow: 0 0 10px #0f0;
     margin-bottom: 20px;
 }
+#mensaje {
+    font-size: 20px;
+    min-height: 60px;
+    margin-bottom: 20px;
+    text-align: center;
+}
 input, button {
     padding: 12px 20px;
     font-size: 18px;
@@ -39,16 +45,15 @@ button:hover {
     from { box-shadow: 0 0 5px #0f0; }
     to { box-shadow: 0 0 20px #0f0; }
 }
-#audio_bg {
-    display: none;
-}
 </style>
 </head>
 <body>
 
 <h2>Laboratorio Secreto</h2>
 
-<button id="btn_inicio">Activar Laboratorio Secreto</button>
+<div id="mensaje"></div>
+
+<button id="btn_inicio">Pulsa aquí para activar el laboratorio secreto</button>
 
 <div id="zona_codigo" style="display:none; margin-top:30px;">
     <p>Introduce el código de 4 cifras:</p>
@@ -61,7 +66,7 @@ button:hover {
 <audio id="musica_fondo" src="musica_fondo.mp3" loop></audio>
 
 <script>
-// Frases de error alternas
+// Frases de error en orden
 const frasesError = [
     "buaaa das pena",
     "mongol",
@@ -71,28 +76,42 @@ const frasesError = [
 // Código secreto
 const codigoCorrecto = "7391";
 
-// Función para hablar con voz masculina y tono de burla
+// Función para escribir letra por letra
+function escribirMensaje(texto, callback) {
+    const cont = document.getElementById('mensaje');
+    cont.textContent = "";
+    let i = 0;
+    const interval = setInterval(() => {
+        cont.textContent += texto[i];
+        i++;
+        if(i >= texto.length) {
+            clearInterval(interval);
+            if(callback) callback();
+        }
+    }, 50); // velocidad de escritura
+}
+
+// Función para hablar con voz masculina y burla
 function hablar(texto, callback) {
     const synth = window.speechSynthesis;
     const utter = new SpeechSynthesisUtterance(texto);
     utter.lang = 'es-ES';
-    utter.pitch = 0.6;      // tono más grave
+    utter.pitch = 0.6; // más grave
     utter.rate = 0.9;
-    
-    // Elegir voz masculina disponible
+    // Seleccionar voz masculina si existe
     const voces = synth.getVoices().filter(v => v.lang.includes('es') && v.name.toLowerCase().includes('male'));
     if(voces.length > 0) utter.voice = voces[0];
-    
-    // Mientras habla, bajar volumen música
+
+    // Bajar volumen música mientras habla
     const bg = document.getElementById('musica_fondo');
     const volumenOriginal = bg.volume;
-    bg.volume = 0.2; // bajar la música
-    
+    bg.volume = 0.2;
+
     utter.onend = () => {
-        bg.volume = volumenOriginal; // restaurar volumen
-        if(callback) callback(); // ejecutar función después de hablar
+        bg.volume = volumenOriginal;
+        if(callback) callback();
     };
-    
+
     synth.speak(utter);
 }
 
@@ -102,22 +121,29 @@ document.getElementById('btn_inicio').addEventListener('click', function() {
     document.getElementById('zona_codigo').style.display = 'block';
 
     const bg = document.getElementById('musica_fondo');
-    bg.play(); // inicia música de fondo
+    bg.volume = 0.3;
+    bg.play();
 
-    // Voz del robot y mensaje inicial
-    hablar("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista");
+    // Mensaje inicial con escritura y voz
+    escribirMensaje("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista", () => {
+        hablar("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista");
+    });
 });
 
 // Función de verificación del código
 function verificarCodigo() {
     const codigo = document.getElementById('codigo').value;
     if(codigo === codigoCorrecto) {
-        hablar("Reconocimiento completado, adelante la siguiente pista", () => {
-            document.getElementById('audio_pista').play();
+        escribirMensaje("Reconocimiento completado, adelante la siguiente pista", () => {
+            hablar("Reconocimiento completado, adelante la siguiente pista", () => {
+                document.getElementById('audio_pista').play();
+            });
         });
     } else {
         const frase = frasesError[Math.floor(Math.random() * frasesError.length)];
-        hablar(frase);
+        escribirMensaje(frase, () => {
+            hablar(frase);
+        });
         document.getElementById('codigo').value = "";
         document.getElementById('codigo').focus();
     }
