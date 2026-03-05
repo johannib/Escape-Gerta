@@ -66,7 +66,7 @@ button:hover {
 <audio id="musica_fondo" src="musica_fondo.mp3" loop></audio>
 
 <script>
-// Frases de error en orden
+// Frases de error una cada vez en orden
 const frasesError = [
     "buaaa das pena",
     "mongol",
@@ -88,17 +88,18 @@ function escribirMensaje(texto, callback) {
             clearInterval(interval);
             if(callback) callback();
         }
-    }, 50); // velocidad de escritura
+    }, 50);
 }
 
-// Función para hablar con voz masculina y burla
+// Función para hablar con voz masculina y tono burla
 function hablar(texto, callback) {
     const synth = window.speechSynthesis;
     const utter = new SpeechSynthesisUtterance(texto);
     utter.lang = 'es-ES';
-    utter.pitch = 0.6; // más grave
+    utter.pitch = 0.6;
     utter.rate = 0.9;
-    // Seleccionar voz masculina si existe
+
+    // Seleccionar voz masculina disponible
     const voces = synth.getVoices().filter(v => v.lang.includes('es') && v.name.toLowerCase().includes('male'));
     if(voces.length > 0) utter.voice = voces[0];
 
@@ -122,12 +123,16 @@ document.getElementById('btn_inicio').addEventListener('click', function() {
 
     const bg = document.getElementById('musica_fondo');
     bg.volume = 0.3;
-    bg.play();
 
-    // Mensaje inicial con escritura y voz
-    escribirMensaje("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista", () => {
-        hablar("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista");
-    });
+    // Reproducir música con promesa para desbloquear audio
+    bg.play().then(() => {
+        // Pequeño retraso para que la música suene antes de la voz
+        setTimeout(() => {
+            escribirMensaje("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista", () => {
+                hablar("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista");
+            });
+        }, 200);
+    }).catch(err => console.log("Error al reproducir música: ", err));
 });
 
 // Función de verificación del código
