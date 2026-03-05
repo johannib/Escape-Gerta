@@ -41,19 +41,19 @@ button:hover { background-color: #0f0; color: #000; cursor: pointer; }
     <button id="btn_pista">PISTA SUPERSECRETA</button>
 </div>
 
-<!-- Audio con controles ocultos para que sea seguro -->
+<!-- Audio con enlaces actualizados -->
 <audio id="musica_fondo" preload="auto">
-    <source src="musica_fondo.ogg" type="audio/ogg">
-    <source src="musica_fondo.mp3" type="audio/mpeg">
+    <source src="musica_fondo_v2.ogg" type="audio/ogg">
+    <source src="musica_fondo_v2.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="audio_pista" preload="auto">
-    <source src="audio_pista.ogg" type="audio/ogg">
-    <source src="audio_pista.mp3" type="audio/mpeg">
+    <source src="audio_pista_v2.ogg" type="audio/ogg">
+    <source src="audio_pista_v2.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-const codigoCorrecto = "7391";
+const codigoCorrecto = "7391"; 
 const frasesError = ["buaaa das pena","mongol","destilas mediocridad"];
 
 // Función de escritura tipo terminal
@@ -69,7 +69,7 @@ function escribirMensaje(texto) {
 document.getElementById('btn_musica').addEventListener('click', function(){
     const bg = document.getElementById('musica_fondo');
     bg.volume = 0.3;
-    bg.play().catch(err=>console.log(err)); // reproducción garantizada por el clic
+    bg.play().catch(err=>console.log(err)); // reproducción garantizada por clic
 
     escribirMensaje("Bienvenidos Josin y Emilia al laboratorio secreto, introduzcan el código correcto para desbloquear la pista");
     document.getElementById('zona_codigo').style.display='block';
