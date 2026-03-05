@@ -13,11 +13,11 @@ body {
     padding-top: 50px;
 }
 h2 { font-size: 36px; text-shadow: 0 0 10px #0f0; margin-bottom: 20px; }
-#mensaje { font-size: 20px; min-height: 60px; margin-bottom: 20px; text-align: left; display: inline-block; white-space: pre-wrap; }
+#mensaje { font-size: 20px; min-height: 60px; margin-bottom: 20px; text-align: left; display: inline-block; white-space: pre-wrap; border-right: 2px solid #0f0; padding-right:5px;}
 input, button { padding: 12px 20px; font-size: 18px; border-radius: 8px; border: 2px solid #0f0; background-color: #000; color: #0f0; margin-top: 10px; outline: none; }
 button { animation: parpadeo 1s infinite alternate; }
 button:hover { background-color: #0f0; color: #000; cursor: pointer; }
-@keyframes parpadeo { from { box-shadow: 0 0 5px #0f0; } to { box-shadow: 0 0 20px #0f0; } }
+@keyframes parpadeo { from { box-shadow:0 0 5px #0f0;} to{box-shadow:0 0 20px #0f0;} }
 </style>
 </head>
 <body>
@@ -25,8 +25,8 @@ button:hover { background-color: #0f0; color: #000; cursor: pointer; }
 <h2>Laboratorio Secreto</h2>
 <div id="mensaje"></div>
 
-<!-- Botón seguro para música -->
-<button id="btn_musica">Modo Ambientillo ON (haz clic para escuchar)</button>
+<!-- Botón visible para música -->
+<button id="btn_musica">Modo Ambientillo ON (haz clic para escuchar música)</button>
 
 <!-- Zona de código -->
 <div id="zona_codigo" style="display:none; margin-top:30px;">
@@ -36,18 +36,18 @@ button:hover { background-color: #0f0; color: #000; cursor: pointer; }
     <button id="btn_enviar">Enviar código</button>
 </div>
 
-<!-- Botón pista -->
+<!-- Botón de pista -->
 <div id="boton_pista" style="display:none; margin-top:20px;">
     <button id="btn_pista">PISTA SUPERSECRETA</button>
 </div>
 
-<!-- Audio dual -->
-<audio id="musica_fondo" loop>
+<!-- Audio con controles ocultos para que sea seguro -->
+<audio id="musica_fondo" preload="auto">
     <source src="musica_fondo.ogg" type="audio/ogg">
     <source src="musica_fondo.mp3" type="audio/mpeg">
 </audio>
 
-<audio id="audio_pista">
+<audio id="audio_pista" preload="auto">
     <source src="audio_pista.ogg" type="audio/ogg">
     <source src="audio_pista.mp3" type="audio/mpeg">
 </audio>
@@ -56,20 +56,20 @@ button:hover { background-color: #0f0; color: #000; cursor: pointer; }
 const codigoCorrecto = "7391";
 const frasesError = ["buaaa das pena","mongol","destilas mediocridad"];
 
-// Escribe letra por letra
+// Función de escritura tipo terminal
 function escribirMensaje(texto) {
     const cont = document.getElementById('mensaje');
     cont.textContent = "";
-    for (let i = 0; i < texto.length; i++) {
+    for (let i=0; i<texto.length; i++){
         setTimeout(()=> { cont.textContent += texto[i]; }, i*50);
     }
 }
 
-// BOTÓN MÚSICA: reproducción garantizada
+// BOTÓN MÚSICA: reproducción directa desde clic
 document.getElementById('btn_musica').addEventListener('click', function(){
     const bg = document.getElementById('musica_fondo');
     bg.volume = 0.3;
-    bg.play().catch(err=>console.log(err)); // nunca bloqueará por falta de interacción
+    bg.play().catch(err=>console.log(err)); // reproducción garantizada por el clic
 
     escribirMensaje("Bienvenidos Josin y Emilia al laboratorio secreto, introduzcan el código correcto para desbloquear la pista");
     document.getElementById('zona_codigo').style.display='block';
@@ -89,10 +89,10 @@ document.getElementById('btn_enviar').addEventListener('click', function(){
     }
 });
 
-// BOTÓN PISTA: reproducción garantizada
+// BOTÓN PISTA: reproducción directa desde clic
 document.getElementById('btn_pista').addEventListener('click', function(){
     const pista = document.getElementById('audio_pista');
-    pista.play().catch(err=>console.log(err)); // nunca bloqueará
+    pista.play().catch(err=>console.log(err)); // reproducción garantizada por clic
 });
 </script>
 
