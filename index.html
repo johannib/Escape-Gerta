@@ -12,68 +12,36 @@ body {
     text-align: center;
     padding-top: 50px;
 }
-h2 {
-    font-size: 36px;
-    text-shadow: 0 0 10px #0f0;
-    margin-bottom: 20px;
-}
-#mensaje {
-    font-size: 20px;
-    min-height: 60px;
-    margin-bottom: 20px;
-    text-align: left;
-    display: inline-block;
-    border-right: 2px solid #0f0; /* cursor */
-    padding-right: 5px;
-    white-space: pre-wrap;
-}
-input, button {
-    padding: 12px 20px;
-    font-size: 18px;
-    border-radius: 8px;
-    border: 2px solid #0f0;
-    background-color: #000;
-    color: #0f0;
-    margin-top: 10px;
-    outline: none;
-}
-button {
-    animation: parpadeo 1s infinite alternate;
-}
-button:hover {
-    background-color: #0f0;
-    color: #000;
-    cursor: pointer;
-}
-@keyframes parpadeo {
-    from { box-shadow: 0 0 5px #0f0; }
-    to { box-shadow: 0 0 20px #0f0; }
-}
+h2 { font-size: 36px; text-shadow: 0 0 10px #0f0; margin-bottom: 20px; }
+#mensaje { font-size: 20px; min-height: 60px; margin-bottom: 20px; text-align: left; display: inline-block; white-space: pre-wrap; }
+input, button { padding: 12px 20px; font-size: 18px; border-radius: 8px; border: 2px solid #0f0; background-color: #000; color: #0f0; margin-top: 10px; outline: none; }
+button { animation: parpadeo 1s infinite alternate; }
+button:hover { background-color: #0f0; color: #000; cursor: pointer; }
+@keyframes parpadeo { from { box-shadow: 0 0 5px #0f0; } to { box-shadow: 0 0 20px #0f0; } }
 </style>
 </head>
 <body>
 
 <h2>Laboratorio Secreto</h2>
-
 <div id="mensaje"></div>
 
-<!-- Botón inicial para activar música -->
-<button id="btn_musica">Modo Ambientillo ON</button>
+<!-- Botón seguro para música -->
+<button id="btn_musica">Modo Ambientillo ON (haz clic para escuchar)</button>
 
 <!-- Zona de código -->
 <div id="zona_codigo" style="display:none; margin-top:30px;">
     <p>Introduce el código de 4 cifras:</p>
-    <input type="text" id="codigo" maxlength="4" autofocus>
+    <input type="text" id="codigo" maxlength="4">
     <br>
-    <button onclick="verificarCodigo()">Enviar</button>
+    <button id="btn_enviar">Enviar código</button>
 </div>
 
-<!-- Botón de pista que aparece después de acertar -->
+<!-- Botón pista -->
 <div id="boton_pista" style="display:none; margin-top:20px;">
-    <button onclick="reproducirPista()">PISTA SUPERSECRETA</button>
+    <button id="btn_pista">PISTA SUPERSECRETA</button>
 </div>
 
-<!-- Audio dual: .ogg y .mp3 -->
+<!-- Audio dual -->
 <audio id="musica_fondo" loop>
     <source src="musica_fondo.ogg" type="audio/ogg">
     <source src="musica_fondo.mp3" type="audio/mpeg">
@@ -85,55 +53,47 @@ button:hover {
 </audio>
 
 <script>
-// Frases de error diferentes cada vez
-const frasesError = ["buaaa das pena","mongol","destilas mediocridad"];
 const codigoCorrecto = "7391";
+const frasesError = ["buaaa das pena","mongol","destilas mediocridad"];
 
-// Escribir mensaje letra por letra con cursor
-function escribirMensaje(texto, callback) {
+// Escribe letra por letra
+function escribirMensaje(texto) {
     const cont = document.getElementById('mensaje');
     cont.textContent = "";
-    let i = 0;
-    const interval = setInterval(()=>{
-        cont.textContent += texto[i++];
-        if(i>=texto.length){
-            clearInterval(interval);
-            if(callback) callback();
-        }
-    },50);
-}
-
-// Botón para activar música
-document.getElementById('btn_musica').addEventListener('click', function(){
-    const bg = document.getElementById('musica_fondo');
-    bg.volume = 0.3;
-    bg.play().catch(err=>console.log("Error música:",err));
-
-    document.getElementById('zona_codigo').style.display='block';
-    escribirMensaje("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista");
-
-    this.style.display='none';
-});
-
-// Verificación del código
-function verificarCodigo(){
-    const codigo = document.getElementById('codigo').value;
-    if(codigo === codigoCorrecto){
-        escribirMensaje("Reconocimiento completado. ¡Pulsad el botón de la PISTA SUPERSECRETA!", ()=>{
-            document.getElementById('boton_pista').style.display='block';
-        });
-    } else {
-        const frase = frasesError[Math.floor(Math.random()*frasesError.length)];
-        escribirMensaje(frase);
-        document.getElementById('codigo').value="";
-        document.getElementById('codigo').focus();
+    for (let i = 0; i < texto.length; i++) {
+        setTimeout(()=> { cont.textContent += texto[i]; }, i*50);
     }
 }
 
-// Reproducir audio de la pista
-function reproducirPista(){
-    document.getElementById('audio_pista').play().catch(err=>console.log("Error audio pista:",err));
-}
+// BOTÓN MÚSICA: reproducción garantizada
+document.getElementById('btn_musica').addEventListener('click', function(){
+    const bg = document.getElementById('musica_fondo');
+    bg.volume = 0.3;
+    bg.play().catch(err=>console.log(err)); // nunca bloqueará por falta de interacción
+
+    escribirMensaje("Bienvenidos Josin y Emilia al laboratorio secreto, introduzcan el código correcto para desbloquear la pista");
+    document.getElementById('zona_codigo').style.display='block';
+    this.style.display='none';
+});
+
+// BOTÓN ENVIAR CÓDIGO
+document.getElementById('btn_enviar').addEventListener('click', function(){
+    const codigo = document.getElementById('codigo').value;
+    if(codigo === codigoCorrecto){
+        escribirMensaje("Reconocimiento completado. ¡Pulsa PISTA SUPERSECRETA!");
+        document.getElementById('boton_pista').style.display='block';
+    } else {
+        const frase = frasesError[Math.floor(Math.random()*frasesError.length)];
+        escribirMensaje(frase);
+        document.getElementById('codigo').value = "";
+    }
+});
+
+// BOTÓN PISTA: reproducción garantizada
+document.getElementById('btn_pista').addEventListener('click', function(){
+    const pista = document.getElementById('audio_pista');
+    pista.play().catch(err=>console.log(err)); // nunca bloqueará
+});
 </script>
 
 </body>
