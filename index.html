@@ -48,7 +48,6 @@ button:hover {
 
 <h2>Laboratorio Secreto</h2>
 
-<!-- Botón inicial para activar laboratorio -->
 <button id="btn_inicio">Activar Laboratorio Secreto</button>
 
 <div id="zona_codigo" style="display:none; margin-top:30px;">
@@ -62,57 +61,86 @@ button:hover {
 <audio id="musica_fondo" src="musica_fondo.mp3.mp3" loop></audio>
 
 <script>
-// Frases de error aleatorias
+
 const frasesError = [
     "buaaa das pena",
     "mongol",
     "destilas mediocridad"
 ];
 
-// Código secreto
 const codigoCorrecto = "7391";
 
-// Función para hablar con voz de robot
-function hablar(texto) {
+const musica = document.getElementById('musica_fondo');
+
+// función hablar con control de música
+function hablar(texto, callback=null) {
+
+    musica.volume = 0.15; // bajar música
+
     const synth = window.speechSynthesis;
     const utter = new SpeechSynthesisUtterance(texto);
     utter.lang = 'es-ES';
     utter.pitch = 1.2;
     utter.rate = 0.9;
+    utter.volume = 1;
+
+    utter.onend = function() {
+
+        musica.volume = 1; // subir música
+
+        if(callback){
+            callback();
+        }
+    };
+
     synth.speak(utter);
 }
 
-// Botón inicial
 document.getElementById('btn_inicio').addEventListener('click', function() {
-    // Ocultar botón y mostrar zona de código
+
     this.style.display = 'none';
     document.getElementById('zona_codigo').style.display = 'block';
-    
-    // Mensaje inicial
-    hablar("Bienvenidos Josin y Emilia al laboratorio secreto, por favor introduzcan el código correcto para desbloquear su siguiente pista");
-    
-    // Iniciar música de fondo
+
     const bg = document.getElementById('musica_fondo');
+    bg.volume = 1;
     bg.play().catch(error => {
-    console.log("Error al reproducir música de fondo:", error);
-});; 
+        console.log("Error al reproducir música de fondo:", error);
+    });
+
+    hablar("Bienvenidos josín y emilia al laboratorio secreto. Por favor, introduzcan el código de 4 cifras para poder continuar. No se preocupen, sabemos que tienen fama de ser algo ineptos, con lo que no bloquerán el sistema si se confunden con el código, aunque si que demostrarán su inutilidad. Buena suerte.");
 });
 
-// Función de verificación del código
 function verificarCodigo() {
+
     const codigo = document.getElementById('codigo').value;
+
     if(codigo === codigoCorrecto) {
-        hablar("Reconocimiento completado, adelante la siguiente pista");
-        const audio = document.getElementById('audio_pista');
-        audio.play();
+
+        musica.pause(); // parar música fondo
+
+        hablar("Reconocimiento completado, adelante la siguiente pista", function(){
+
+            hablar("Iniciando pista en 3, 2, 1", function(){
+
+                const audio = document.getElementById('audio_pista');
+                audio.volume = 1;
+                audio.play();
+
+            });
+
+        });
+
     } else {
-        // Elegir frase aleatoria
+
         const frase = frasesError[Math.floor(Math.random() * frasesError.length)];
+
         hablar(frase);
+
         document.getElementById('codigo').value = "";
         document.getElementById('codigo').focus();
     }
 }
+
 </script>
 
 </body>
