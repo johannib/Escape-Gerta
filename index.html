@@ -93,7 +93,9 @@ document.getElementById('btn_inicio').addEventListener('click', function() {
     
     // Iniciar música de fondo
     const bg = document.getElementById('musica_fondo');
-    bg.play(); 
+    bg.play().catch(error => {
+    console.log("Error al reproducir música de fondo:", error);
+});; 
 });
 
 // Función de verificación del código
