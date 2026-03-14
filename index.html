@@ -11,29 +11,28 @@ body {
     font-family: 'Courier New', monospace;
     text-align: center;
     padding-top: 50px;
-    transition: background 0.5s;
 }
 
-h2 { font-size: 36px; text-shadow: 0 0 10px #0f0; }
+h2 { font-size: 36px; text-shadow: 0 0 10px #0f0; margin-bottom: 20px; }
 
-#nota_volumen { font-size: 20px; margin-bottom: 25px; text-shadow: 0 0 8px #0f0; }
+#nota_volumen {
+    font-size:20px;
+    margin-bottom:25px;
+    text-shadow:0 0 8px #0f0;
+}
 
-#aviso_codigo { color: #ff4444; font-size: 16px; margin-bottom: 10px; }
+#aviso_codigo {
+    color:#ff4444;
+    font-size:16px;
+    margin-bottom:10px;
+}
 
-#pantalla_pista {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: black;
-    color: white;
-    font-size: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    z-index: 9999;
-    flex-direction: column;
+#pista_desbloqueada {
+    display:none;
+    font-size:70px;
+    color:#0f0;
+    text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+    margin-top: 30px;
 }
 
 input, button {
@@ -61,8 +60,6 @@ button:hover {
     from { box-shadow: 0 0 5px #0f0; }
     to { box-shadow: 0 0 20px #0f0; }
 }
-
-#btn_repetir { display: none; margin-top: 30px; padding: 12px 20px; font-size: 24px; }
 </style>
 </head>
 
@@ -82,10 +79,7 @@ button:hover {
     <button onclick="verificarCodigo()">Enviar</button>
 </div>
 
-<div id="pantalla_pista">
-    PISTA DESBLOQUEADA
-    <button id="btn_repetir" onclick="repetirPista()">Repetir Pista</button>
-</div>
+<div id="pista_desbloqueada">PISTA DESBLOQUEADA</div>
 
 <audio id="musica_fondo" src="musica_fondo.mp3.mp3" loop></audio>
 
@@ -93,14 +87,13 @@ button:hover {
 const frasesError = ["buaaa das pena","mongol","destilas mediocridad"];
 const codigoCorrecto = "7391";
 const musica = document.getElementById('musica_fondo');
-
 const listaAudios = [
-"Joker","Gladiador","Dragonborn","Arcade","Careme","Petra","Dragonball","Itxel","Potter","Barrilete",
-"Salacia","Marvel","Videoclub","Underworld","Pactum","Entrevista","Haunted","Ratas","Goonies"
+"Joker","Gladiador","Dragonborn","Arcade","Careme","Petra","Dragonball","Itxel","Potter",
+"Barrilete","Salacia","Marvel","Videoclub","Underworld","Pactum","Entrevista","Haunted","Ratas","Goonies"
 ];
 
 // Función para hablar con robot
-function hablar(texto){
+function hablar(texto, callback=null){
     musica.volume = 0.15;
     const synth = window.speechSynthesis;
     const utter = new SpeechSynthesisUtterance(texto);
@@ -108,7 +101,10 @@ function hablar(texto){
     utter.pitch = 1.2;
     utter.rate = 0.9;
     utter.volume = 1;
-    utter.onend = function(){ musica.volume = 1; };
+    utter.onend = function(){
+        musica.volume = 1;
+        if(callback){ callback(); }
+    };
     synth.speak(utter);
 }
 
@@ -121,16 +117,13 @@ document.getElementById('btn_inicio').addEventListener('click', function(){
     hablar("Bienvenidos josín y emilia al laboratorio secreto. Por favor, introduzcan el código de 4 cifras para poder continuar. No se preocupen, sabemos que tienen fama de ser algo ineptos, con lo que no bloquearán el sistema si se confunden con el código, aunque sí que demostrarán su inutilidad. Buena suerte.");
 });
 
-// Función reproducir audios secuencial con 2s de pausa
+// Reproducir audios secuencial
 function reproducirAudiosSecuencial(index){
-    if(index >= listaAudios.length){
-        document.getElementById("btn_repetir").style.display = "block";
-        return;
-    }
+    if(index >= listaAudios.length) return;
     const audio = new Audio(listaAudios[index]);
     audio.play();
     audio.onended = function(){
-        setTimeout(()=>reproducirAudiosSecuencial(index+1), 2000);
+        setTimeout(()=>reproducirAudiosSecuencial(index+1),2000);
     };
 }
 
@@ -139,20 +132,19 @@ function verificarCodigo(){
     const codigo = document.getElementById('codigo').value;
     if(codigo === codigoCorrecto){
         musica.pause();
-        document.getElementById('pantalla_pista').style.display = 'flex';
-        setTimeout(()=>reproducirAudiosSecuencial(0), 500);
+        // ocultar zona de código y aviso
+        document.getElementById('zona_codigo').style.display = 'none';
+        document.getElementById('aviso_codigo').style.display = 'none';
+        // mostrar texto pista desbloqueada
+        document.getElementById('pista_desbloqueada').style.display = 'block';
+        // iniciar audios
+        reproducirAudiosSecuencial(0);
     } else {
         const frase = frasesError[Math.floor(Math.random() * frasesError.length)];
         hablar(frase);
         document.getElementById('codigo').value = "";
         document.getElementById('codigo').focus();
     }
-}
-
-// Repetir pista
-function repetirPista(){
-    document.getElementById("btn_repetir").style.display = "none";
-    reproducirAudiosSecuencial(0);
 }
 </script>
 
