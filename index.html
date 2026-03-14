@@ -3,254 +3,251 @@
 <head>
 <meta charset="UTF-8">
 <title>Laboratorio Secreto</title>
+
 <style>
-body{
-  background:url('laboratorio.jpg') no-repeat center center fixed;
-  background-size:cover;
-  color:#0f0;
-  font-family:'Courier New', monospace;
-  text-align:center;
-  padding-top:50px;
-  transition:background 1s;
-}
-h2{ font-size:36px; text-shadow:0 0 10px #0f0; }
-#nota_volumen{ font-size:20px; margin-bottom:25px; }
-#aviso_codigo{ color:#ff4444; font-size:16px; }
-input,button{ padding:12px 20px; font-size:18px; border-radius:8px; border:2px solid #0f0; background:#000; color:#0f0; margin-top:10px; }
-button{ animation:parpadeo 1s infinite alternate; }
-@keyframes parpadeo{ from{box-shadow:0 0 5px #0f0;} to{box-shadow:0 0 20px #0f0;} }
 
-/* pantalla sistema */
+body {
+    background: url('laboratorio.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    padding-top: 50px;
+}
+
+h2 {
+    font-size: 36px;
+    text-shadow: 0 0 10px #0f0;
+    margin-bottom: 20px;
+}
+
+#nota_volumen{
+    font-size:20px;
+    margin-bottom:25px;
+    text-shadow:0 0 8px #0f0;
+}
+
+#aviso_codigo{
+    color:#ff4444;
+    font-size:16px;
+    margin-bottom:10px;
+}
+
 #pantalla_pista{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-color:#0f0;
-font-family:monospace;
-padding:40px;
-box-sizing:border-box;
-z-index:9999;
-display:flex;
-flex-direction:column;
-align-items:center;
+
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:black;
+    color:white;
+    font-size:60px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    z-index:9999;
+
 }
 
-/* terminal */
-#terminal{ font-size:18px; white-space:pre-line; line-height:1.6; }
+input, button {
 
-/* texto final */
-#texto_final{
-display:none;
-text-align:center;
-font-size:70px;
-color:white;
-margin-top:20vh;
-letter-spacing:8px;
-text-shadow:0 0 5px red,0 0 15px red,0 0 25px red;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: 2px solid #0f0;
+    background-color: #000;
+    color: #0f0;
+    margin-top: 10px;
+    outline: none;
+
 }
 
-/* glitch */
-.glitch{ animation:glitch 0.2s infinite; }
-@keyframes glitch{
-0%{transform:translate(2px,0)}
-25%{transform:translate(-2px,2px)}
-50%{transform:translate(2px,-2px)}
-75%{transform:translate(-2px,-1px)}
-100%{transform:translate(0,0)}
+button {
+    animation: parpadeo 1s infinite alternate;
 }
 
-/* alarma */
-#alarma{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:red;
-opacity:0;
-pointer-events:none;
+button:hover {
+    background-color: #0f0;
+    color: #000;
+    cursor: pointer;
 }
-.parpadeo_rojo{ animation:alarma 0.5s infinite; }
-@keyframes alarma{ 0%{opacity:0} 50%{opacity:0.35} 100%{opacity:0} }
 
-/* barras de progreso */
-#progreso_container{
-width:80%;
-height:25px;
-background:#111;
-border:2px solid #0f0;
-margin:20px auto;
-border-radius:5px;
-overflow:hidden;
-display:none;
+@keyframes parpadeo {
+    from { box-shadow: 0 0 5px #0f0; }
+    to { box-shadow: 0 0 20px #0f0; }
 }
-#progreso_bar{ width:0%; height:100%; background:#0f0; transition:width 0.1s linear; }
 
-/* contador de seguridad */
-#contador{ font-size:24px; margin-top:10px; }
-
-/* boton repetir pista */
-#btn_repetir{ display:none; margin-top:30px; }
 </style>
 </head>
 
 <body>
 
 <h2>Laboratorio Secreto</h2>
+
 <p id="nota_volumen">⚠️ Por favor, suban el volumen antes de proceder</p>
+
 <button id="btn_inicio">Activar Laboratorio Secreto</button>
 
-<div id="zona_codigo" style="display:none;margin-top:30px">
-  <p id="aviso_codigo">⚠️ NO introducir código hasta finalizar las instrucciones</p>
-  <p>Introduce el código de 4 cifras:</p>
-  <input type="text" id="codigo" maxlength="4">
-  <br>
-  <button onclick="verificarCodigo()">Enviar</button>
+<div id="zona_codigo" style="display:none; margin-top:30px;">
+
+<p id="aviso_codigo">⚠️ NO introducir código hasta finalizar las instrucciones</p>
+
+<p>Introduce el código de 4 cifras:</p>
+
+<input type="text" id="codigo" maxlength="4" autofocus>
+
+<br>
+
+<button onclick="verificarCodigo()">Enviar</button>
+
 </div>
 
 <div id="pantalla_pista">
-  <div id="alarma"></div>
-  <div id="terminal"></div>
-  <div id="progreso_container"><div id="progreso_bar"></div></div>
-  <div id="contador"></div>
-  <div id="texto_final">PISTA DESBLOQUEADA</div>
-  <button id="btn_repetir" onclick="repetirPista()">Repetir Pista</button>
+PISTA DESBLOQUEADA
 </div>
 
-<audio id="musica_fondo" src="musica_fondo.mp3" loop></audio>
+<audio id="musica_fondo" src="musica_fondo.mp3.mp3" loop></audio>
 
 <script>
-const frasesError=["buaaa das pena","mongol","destilas mediocridad"];
-const codigoCorrecto="7391";
-const musica=document.getElementById("musica_fondo");
-const listaAudios=[
-"Joker","Gladiador","Dragonborn","Arcade","Careme","Petra","Dragonball","Itxel","Potter","Barrilete",
-"Salacia","Marvel","Videoclub","Underworld","Pactum","Entrevista","Haunted","Ratas","Goonies"
+
+const frasesError = [
+"buaaa das pena",
+"mongol",
+"destilas mediocridad"
 ];
 
-// boton iniciar laboratorio
-document.getElementById("btn_inicio").addEventListener("click",function(){
-  this.style.display="none";
-  document.getElementById("nota_volumen").style.display="none";
-  document.getElementById("zona_codigo").style.display="block";
+const codigoCorrecto = "7391";
 
-  musica.play();
+const musica = document.getElementById('musica_fondo');
 
-  // voz robot
-  const synth=window.speechSynthesis;
-  const utter=new SpeechSynthesisUtterance(
-    "Bienvenidos josín y emilia al laboratorio secreto. Por favor, introduzcan el código de 4 cifras para poder continuar. No se preocupen, sabemos que tienen fama de ser algo ineptos, con lo que no bloquearán el sistema si se confunden con el código, aunque sí que demostrarán su inutilidad. Buena suerte."
-  );
-  utter.lang="es-ES"; utter.pitch=1.2; utter.rate=0.9; utter.volume=1;
-  utter.onstart=function(){ musica.volume=0.15; };
-  utter.onend=function(){ musica.volume=1; };
-  synth.speak(utter);
+const listaAudios = [
+
+"Joker",
+"Gladiador",
+"Dragonborn",
+"Arcade",
+"Careme",
+"Petra",
+"Dragonball",
+"Itxel",
+"Potter",
+"Barrilete",
+"Salacia",
+"Marvel",
+"Videoclub",
+"Underworld",
+"Pactum",
+"Entrevista",
+"Haunted",
+"Ratas",
+"Goonies"
+
+];
+
+function hablar(texto, callback=null){
+
+musica.volume = 0.15;
+
+const synth = window.speechSynthesis;
+const utter = new SpeechSynthesisUtterance(texto);
+
+utter.lang = 'es-ES';
+utter.pitch = 1.2;
+utter.rate = 0.9;
+utter.volume = 1;
+
+utter.onend = function(){
+
+musica.volume = 1;
+
+if(callback){
+callback();
+}
+
+};
+
+synth.speak(utter);
+
+}
+
+document.getElementById('btn_inicio').addEventListener('click', function(){
+
+this.style.display = 'none';
+
+document.getElementById('nota_volumen').style.display = 'none';
+
+document.getElementById('zona_codigo').style.display = 'block';
+
+const bg = document.getElementById('musica_fondo');
+
+bg.volume = 1;
+
+bg.play().catch(error => {
+
+console.log("Error al reproducir música:", error);
+
 });
 
-// reproducir audios secuencial
-function reproducirAudiosSecuencial(i){
-  if(i>=listaAudios.length){
-    document.getElementById("btn_repetir").style.display="block";
-    return;
-  }
-  const audio=new Audio(listaAudios[i]);
-  audio.play();
-  audio.onended=function(){
-    setTimeout(()=>{reproducirAudiosSecuencial(i+1);},2000);
-  };
+hablar("Bienvenidos josín y emilia al laboratorio secreto. Por favor, introduzcan el código de 4 cifras para poder continuar. No se preocupen, sabemos que tienen fama de ser algo ineptos, con lo que no bloquearán el sistema si se confunden con el código, aunque si que demostrarán su inutilidad. Buena suerte.");
+
+});
+
+function reproducirAudiosSecuencial(index){
+
+if(index >= listaAudios.length){
+return;
 }
 
-// escribir lineas terminal
-function escribirLinea(texto,callback){
-  const terminal=document.getElementById("terminal");
-  let i=0;
-  function escribir(){
-    if(i<texto.length){
-      terminal.innerHTML+=texto.charAt(i);
-      i++;
-      setTimeout(escribir,20);
-    }else{
-      terminal.innerHTML+="\n";
-      if(callback)callback();
-    }
-  }
-  escribir();
+const audio = new Audio(listaAudios[index]);
+
+audio.play();
+
+audio.onended = function(){
+
+setTimeout(function(){
+
+reproducirAudiosSecuencial(index + 1);
+
+},2000);
+
+};
+
 }
 
-// secuencia hacker
-function secuenciaSistema(){
-  const pantalla=document.getElementById("pantalla_pista");
-  const alarma=document.getElementById("alarma");
-  const textoFinal=document.getElementById("texto_final");
-  const progreso=document.getElementById("progreso_container");
-  const barra=document.getElementById("progreso_bar");
-  const contador=document.getElementById("contador");
-  pantalla.style.display="flex";
-  document.body.style.background="black";
-  alarma.classList.add("parpadeo_rojo");
-  document.getElementById("terminal").innerHTML="";
-  textoFinal.style.display="none";
-  document.getElementById("btn_repetir").style.display="none";
-
-  let lineas=[
-    "Inicializando sistema...",
-    "Accediendo a base de datos secreta...",
-    "Verificando credenciales...",
-    "Descifrando código...",
-    "Analizando código ingresado..."
-  ];
-
-  function escribirLineas(idx){
-    if(idx>=lineas.length){
-      barra.style.width="0%";
-      progreso.style.display="block";
-      contador.style.display="block";
-      let valor=0, tiempo=0;
-      let interval=setInterval(()=>{
-        valor++; tiempo++;
-        barra.style.width=valor+"%";
-        contador.innerHTML="Contador de seguridad: "+tiempo+" s";
-        if(valor>=100){
-          clearInterval(interval);
-          contador.style.display="none";
-          progreso.style.display="none";
-          alarma.classList.remove("parpadeo_rojo");
-          textoFinal.style.display="block";
-          textoFinal.classList.add("glitch");
-          setTimeout(()=>{textoFinal.classList.remove("glitch"); reproducirAudiosSecuencial(0);},2000);
-        }
-      },50);
-      return;
-    }
-    escribirLinea(lineas[idx],()=>{escribirLineas(idx+1);});
-  }
-  escribirLineas(0);
-}
-
-// verificar código
 function verificarCodigo(){
-  const codigo=document.getElementById("codigo").value;
-  if(codigo===codigoCorrecto){
-    musica.pause();
-    secuenciaSistema();
-  }else{
-    const frase=frasesError[Math.floor(Math.random()*frasesError.length)];
-    const synth=window.speechSynthesis;
-    const utter=new SpeechSynthesisUtterance(frase);
-    utter.lang="es-ES"; synth.speak(utter);
-    document.getElementById("codigo").value="";
-  }
+
+const codigo = document.getElementById('codigo').value;
+
+if(codigo === codigoCorrecto){
+
+musica.pause();
+
+document.body.style.background="black";
+
+document.getElementById("pantalla_pista").style.display="flex";
+
+setTimeout(function(){
+
+reproducirAudiosSecuencial(0);
+
+},2000);
+
+}else{
+
+const frase = frasesError[Math.floor(Math.random() * frasesError.length)];
+
+hablar(frase);
+
+document.getElementById('codigo').value = "";
+document.getElementById('codigo').focus();
+
 }
 
-// repetir pista
-function repetirPista(){
-  document.getElementById("btn_repetir").style.display="none";
-  reproducirAudiosSecuencial(0);
 }
+
 </script>
 
 </body>
