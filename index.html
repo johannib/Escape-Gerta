@@ -33,6 +33,24 @@ h2 { font-size: 36px; text-shadow: 0 0 10px #0f0; margin-bottom: 20px; }
     color:#0f0;
     text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
     margin-top: 30px;
+    flex-direction: column;
+}
+
+#btn_repetir {
+    display:none;
+    margin-top: 40px;
+    padding: 12px 30px;
+    font-size: 24px;
+    border-radius: 10px;
+    border: 2px solid #0f0;
+    background-color: #000;
+    color: #0f0;
+    cursor: pointer;
+}
+
+#btn_repetir:hover {
+    background-color: #0f0;
+    color: #000;
 }
 
 input, button {
@@ -79,7 +97,10 @@ button:hover {
     <button onclick="verificarCodigo()">Enviar</button>
 </div>
 
-<div id="pista_desbloqueada">PISTA DESBLOQUEADA</div>
+<div id="pista_desbloqueada">
+    PISTA DESBLOQUEADA
+    <button id="btn_repetir" onclick="repetirPista()">Repetir Pista</button>
+</div>
 
 <audio id="musica_fondo" src="musica_fondo.mp3.mp3" loop></audio>
 
@@ -117,9 +138,12 @@ document.getElementById('btn_inicio').addEventListener('click', function(){
     hablar("Bienvenidos josín y emilia al laboratorio secreto. Por favor, introduzcan el código de 4 cifras para poder continuar. No se preocupen, sabemos que tienen fama de ser algo ineptos, con lo que no bloquearán el sistema si se confunden con el código, aunque sí que demostrarán su inutilidad. Buena suerte.");
 });
 
-// Reproducir audios secuencial
+// Reproducir audios secuencial con control de mostrar botón al final
 function reproducirAudiosSecuencial(index){
-    if(index >= listaAudios.length) return;
+    if(index >= listaAudios.length){
+        document.getElementById('btn_repetir').style.display = 'block';
+        return;
+    }
     const audio = new Audio(listaAudios[index]);
     audio.play();
     audio.onended = function(){
@@ -136,15 +160,27 @@ function verificarCodigo(){
         document.getElementById('zona_codigo').style.display = 'none';
         document.getElementById('aviso_codigo').style.display = 'none';
         // mostrar texto pista desbloqueada
-        document.getElementById('pista_desbloqueada').style.display = 'block';
-        // iniciar audios
-        reproducirAudiosSecuencial(0);
+        document.getElementById('pista_desbloqueada').style.display = 'flex';
+        
+        // robot habla antes de reproducir audios
+        hablar("Reconocimiento completado, adelante la siguiente pista", function(){
+            hablar("Iniciando pista en 3, 2, 1", function(){
+                reproducirAudiosSecuencial(0);
+            });
+        });
+
     } else {
         const frase = frasesError[Math.floor(Math.random() * frasesError.length)];
         hablar(frase);
         document.getElementById('codigo').value = "";
         document.getElementById('codigo').focus();
     }
+}
+
+// Función para repetir la pista
+function repetirPista(){
+    document.getElementById('btn_repetir').style.display = 'none';
+    reproducirAudiosSecuencial(0);
 }
 </script>
 
