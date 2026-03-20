@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Laboratorio Secreto</title>
+
 <style>
 body {
     background: url('laboratorio.jpg') no-repeat center center fixed;
@@ -37,7 +38,7 @@ h2 { font-size: 36px; text-shadow: 0 0 10px #0f0; margin-bottom: 20px; }
 }
 
 #btn_repetir {
-    display:none;
+    display:block;
     margin-top: 40px;
     padding: 12px 30px;
     font-size: 24px;
@@ -105,83 +106,142 @@ button:hover {
 <audio id="musica_fondo" src="musica_fondo.mp3.mp3" loop></audio>
 
 <script>
-const frasesError = ["buaaa das pena","mongol","destilas mediocridad"];
+
+const frasesError = [
+"buaaa das pena",
+"mongol",
+"destilas mediocridad",
+"deshonra sobre tu vaca",
+"eres una vergüenza",
+"no dejas de decepcionarme",
+"no eres tonto eres mongol que no es lo mismo",
+"coño vamo putas"
+];
+
 const codigoCorrecto = "7391";
+
 const musica = document.getElementById('musica_fondo');
+
+let audioActual = null;
+
 const listaAudios = [
 "Joker","Gladiador","Dragonborn","Arcade","Careme","Petra","Dragonball","Itxel","Potter",
 "Barrilete","Salacia","Marvel","Videoclub","Underworld","Pactum","Entrevista","Haunted","Ratas","Goonies"
 ];
 
-// Función para hablar con robot
+function pararRobot(){
+    window.speechSynthesis.cancel();
+}
+
 function hablar(texto, callback=null){
+
     musica.volume = 0.15;
+
     const synth = window.speechSynthesis;
     const utter = new SpeechSynthesisUtterance(texto);
+
     utter.lang = 'es-ES';
     utter.pitch = 1.2;
     utter.rate = 0.9;
     utter.volume = 1;
+
     utter.onend = function(){
+
         musica.volume = 1;
-        if(callback){ callback(); }
+
+        if(callback){
+            callback();
+        }
+
     };
+
     synth.speak(utter);
 }
 
-// Botón iniciar laboratorio
 document.getElementById('btn_inicio').addEventListener('click', function(){
+
     this.style.display = 'none';
+
     document.getElementById('nota_volumen').style.display = 'none';
+
     document.getElementById('zona_codigo').style.display = 'block';
+
     musica.play().catch(e=>console.log(e));
+
     hablar("Bienvenidos josín y emilia al laboratorio secreto. Por favor, introduzcan el código de 4 cifras para poder continuar. No se preocupen, sabemos que tienen fama de ser algo ineptos, con lo que no bloquearán el sistema si se confunden con el código, aunque sí que demostrarán su inutilidad. Buena suerte.");
+
 });
 
-// Reproducir audios secuencial con control de mostrar botón al final
 function reproducirAudiosSecuencial(index){
+
+    if(audioActual){
+        audioActual.pause();
+    }
+
     if(index >= listaAudios.length){
-        document.getElementById('btn_repetir').style.display = 'block';
         return;
     }
-    const audio = new Audio(listaAudios[index]);
-    audio.play();
-    audio.onended = function(){
+
+    audioActual = new Audio(listaAudios[index]);
+
+    audioActual.play();
+
+    audioActual.onended = function(){
         setTimeout(()=>reproducirAudiosSecuencial(index+1),2000);
     };
+
 }
 
-// Verificar código
 function verificarCodigo(){
+
+    pararRobot();
+
     const codigo = document.getElementById('codigo').value;
+
     if(codigo === codigoCorrecto){
+
         musica.pause();
-        // ocultar zona de código y aviso
+
         document.getElementById('zona_codigo').style.display = 'none';
         document.getElementById('aviso_codigo').style.display = 'none';
-        // mostrar texto pista desbloqueada
+
         document.getElementById('pista_desbloqueada').style.display = 'flex';
-        
-        // robot habla antes de reproducir audios
+
         hablar("Reconocimiento completado, adelante la siguiente pista", function(){
+
             hablar("Iniciando pista en 3, 2, 1", function(){
+
                 reproducirAudiosSecuencial(0);
+
             });
+
         });
 
-    } else {
+    } 
+    else {
+
         const frase = frasesError[Math.floor(Math.random() * frasesError.length)];
+
         hablar(frase);
+
         document.getElementById('codigo').value = "";
         document.getElementById('codigo').focus();
+
     }
+
 }
 
-// Función para repetir la pista
 function repetirPista(){
-    document.getElementById('btn_repetir').style.display = 'none';
+
+    if(audioActual){
+        audioActual.pause();
+        audioActual.currentTime = 0;
+    }
+
     reproducirAudiosSecuencial(0);
+
 }
+
 </script>
 
 </body>
